@@ -3,12 +3,6 @@ description:
 globs: 
 alwaysApply: true
 ---
----
-description: This rule defines the standards and best practices for creating Page Objects in CodeceptJS tests. It ensures consistent structure, maintainable selectors, and proper separation of concerns between page objects and test assertions. The rule emphasizes using unique CSS selectors over XPaths, avoiding assertions in page objects, and following a standardized folder structure.
-globs: ["**/pages/**/*.ts"]
-alwaysApply: false
----
-
 # CodeceptJS Page Object Rule
 
 ## Rule Summary
@@ -20,6 +14,7 @@ This rule enforces a consistent structure and naming convention for Page Object 
 ## ✅ Correct Usage
 
 ```ts
+// File: cart.page.ts
 class StorePage {
   locators = {
     // Use unique, stable selectors
@@ -54,24 +49,14 @@ export = new StorePage();
 ## ❌ Incorrect Usage
 
 ```ts
+// File: Cart.ts ❌ Incorrect file name
 const selectors = {
   // Avoid non-unique selectors and XPaths
   input: '//input[@type="search"]', // ❌ XPath
   button: '.button', // ❌ Non-unique selector
 };
 
-function goToHome() {
-  I.amOnPage('/');
-}
-
-// Avoid assertions in Page Objects
-async verifyProductDetails(expectedName: string, expectedPrice: string): Promise<void> {
-  const actualName = await I.grabTextFrom(this.locators.productName);
-  const actualPrice = await I.grabTextFrom(this.locators.productPrice);
-  
-  I.assertEqual(actualName, expectedName); // ❌ Don't use assertions
-  I.assertEqual(actualPrice, expectedPrice); // ❌ Don't use assertions
-}
+// ... rest of incorrect usage ...
 ```
 
 ### 💡 Why It Matters
@@ -97,6 +82,7 @@ Following a standard structure ensures:
 - Use unique, stable selectors
 - Prefer CSS selectors over XPaths
 - Use data attributes for unique identification when needed
+- Follow file naming pattern: `*.page.ts`
 
 ---
 
@@ -109,6 +95,7 @@ This rule does not support automatic fixing. Manual update recommended based on 
 - All Page Objects must be created under: `apps/1c_e2e/src/pages`
 - After generation, move the new Page Object file to its respective functional or feature-specific folder inside this directory
 - Example: A cart-related page should be moved to `apps/1c_e2e/src/pages/cart`
+- File name must follow pattern: `*.page.ts`, e.g. `cart.page.ts`, `store.page.ts`
 
 ## ✅ Best Practices
 
@@ -126,6 +113,7 @@ This rule does not support automatic fixing. Manual update recommended based on 
 - Combine selectors to make them more specific (e.g., `.minicart-wrapper .cart-icon`)
 - Avoid using nth-child or nth-of-type selectors when possible
 - Use text content as a last resort for element identification
+- Follow file naming pattern: `*.page.ts`
 
 ## 🚫 Anti-patterns
 
@@ -139,6 +127,7 @@ This rule does not support automatic fixing. Manual update recommended based on 
 - Do not use nth-child or nth-of-type selectors without proper context
 - Avoid using text content as the primary selector
 - Do not use dynamic IDs or classes that change with each build
+- Do not name files without `.page.ts` suffix
 
 ## 🔍 Detection Pattern
 
@@ -149,6 +138,7 @@ A valid Page Object file must:
 - Not contain any assertion methods
 - Use unique, stable selectors
 - Prefer CSS selectors over XPaths
+- Follow file naming pattern: `*.page.ts`
 
 ## 🛠️ Fix Suggestions
 
@@ -161,3 +151,4 @@ A valid Page Object file must:
 - Make selectors more specific and unique
 - Use data attributes for unique identification
 - Combine selectors to increase specificity
+- Rename files to follow `*.page.ts` pattern
