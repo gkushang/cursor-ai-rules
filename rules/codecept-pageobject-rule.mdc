@@ -1,0 +1,157 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# CodeceptJS Page Object Rule
+
+## Rule Summary
+
+This rule enforces a consistent structure and naming convention for Page Object classes in CodeceptJS tests. It helps improve readability, reusability, and maintainability.
+
+---
+
+## ✅ Correct Usage
+
+```ts
+class StorePage {
+  locators = {
+    // Use unique, stable selectors
+    searchInput: locate('input[type="search"][name="q"]').as('Search Input'),
+    cartIcon: locate('.minicart-wrapper .cart-icon').as('Cart Icon'),
+  };
+
+  async open(): Promise<void> {
+    I.amOnPage('/');
+  }
+
+  async search(product: string): Promise<void> {
+    I.fillField(this.locators.searchInput, product);
+    I.pressKey('Enter');
+  }
+
+  // Return values instead of assertions
+  async getProductName(): Promise<string> {
+    return await I.grabTextFrom(this.locators.productName);
+  }
+
+  async getProductPrice(): Promise<string> {
+    return await I.grabTextFrom(this.locators.productPrice);
+  }
+}
+
+export = new StorePage();
+```
+
+---
+
+## ❌ Incorrect Usage
+
+```ts
+const selectors = {
+  // Avoid non-unique selectors and XPaths
+  input: '//input[@type="search"]', // ❌ XPath
+  button: '.button', // ❌ Non-unique selector
+};
+
+function goToHome() {
+  I.amOnPage('/');
+}
+
+// Avoid assertions in Page Objects
+async verifyProductDetails(expectedName: string, expectedPrice: string): Promise<void> {
+  const actualName = await I.grabTextFrom(this.locators.productName);
+  const actualPrice = await I.grabTextFrom(this.locators.productPrice);
+  
+  I.assertEqual(actualName, expectedName); // ❌ Don't use assertions
+  I.assertEqual(actualPrice, expectedPrice); // ❌ Don't use assertions
+}
+```
+
+### 💡 Why It Matters
+
+Following a standard structure ensures:
+- Easier onboarding for new team members
+- Predictable structure across all Page Objects
+- Simplified maintenance and updates
+- Separation of concerns (Page Objects handle interactions, tests handle assertions)
+- More reliable and maintainable tests
+- Better performance with CSS selectors
+
+---
+
+## 🛠️ Suggestions
+
+- Use `class` for each Page Object
+- Use `locators` object with meaningful aliases via `.as()`
+- Group methods logically by UI interactions
+- Export the instance using `export = new ClassName();`
+- Return values instead of making assertions
+- Move assertions to test files
+- Use unique, stable selectors
+- Prefer CSS selectors over XPaths
+- Use data attributes for unique identification when needed
+
+---
+
+## 🔄 Auto-fix Support
+
+This rule does not support automatic fixing. Manual update recommended based on provided examples.
+
+## 📁 Folder Convention
+
+- All Page Objects must be created under: `apps/1c_e2e/src/pages`
+- After generation, move the new Page Object file to its respective functional or feature-specific folder inside this directory
+- Example: A cart-related page should be moved to `apps/1c_e2e/src/pages/cart`
+
+## ✅ Best Practices
+
+- Use `inject()` to include shared helpers like `I`, `C`, `G`, etc.
+- Declare all UI locators inside a `locators` object using descriptive `locate` helpers
+- Group related locators in nested objects where appropriate (e.g., `accountMenu`, `multiCurrencyMenu`)
+- Use meaningful `as()` descriptions on `locate` for improved readability and debugging
+- Export the Page Object instance using `export = new YourPage();` at the end of the file
+- Name the class with a suffix `Page`, e.g., `StorePage`, `CartPage`
+- Return values from methods instead of making assertions
+- Move all assertions to test files
+- Use unique, stable selectors that won't break with UI changes
+- Prefer CSS selectors over XPaths for better performance and maintainability
+- Use data attributes (e.g., `[data-testid="cart-icon"]`) for unique identification
+- Combine selectors to make them more specific (e.g., `.minicart-wrapper .cart-icon`)
+- Avoid using nth-child or nth-of-type selectors when possible
+- Use text content as a last resort for element identification
+
+## 🚫 Anti-patterns
+
+- Do not add Verify or Assertions in the Page Object
+- Do not use `I.assertEqual` or any other assertion methods in Page Objects
+- Avoid hardcoding timeouts inside test methods
+- Avoid putting business logic directly in test steps — encapsulate them in Page Object methods
+- Do not create Page Objects outside `apps/1c_e2e/src/pages`
+- Do not use XPaths unless absolutely necessary
+- Avoid non-unique selectors that could match multiple elements
+- Do not use nth-child or nth-of-type selectors without proper context
+- Avoid using text content as the primary selector
+- Do not use dynamic IDs or classes that change with each build
+
+## 🔍 Detection Pattern
+
+A valid Page Object file must:
+- Use `class` syntax
+- Contain a `locators` object
+- Export a singleton with `export = new ClassName();`
+- Not contain any assertion methods
+- Use unique, stable selectors
+- Prefer CSS selectors over XPaths
+
+## 🛠️ Fix Suggestions
+
+- If a file is created outside the expected folder, move it to `apps/1c_e2e/src/pages`
+- Rename the class to end with `Page` for clarity
+- Ensure all locators are declared under `this.locators`
+- Move assertions to test files
+- Convert assertion methods to value-returning methods
+- Replace XPaths with CSS selectors
+- Make selectors more specific and unique
+- Use data attributes for unique identification
+- Combine selectors to increase specificity
