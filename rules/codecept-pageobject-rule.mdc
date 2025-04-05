@@ -3,6 +3,12 @@ description:
 globs: 
 alwaysApply: true
 ---
+---
+description: This rule defines the standards and best practices for creating Page Objects in CodeceptJS tests. It ensures consistent structure, maintainable selectors, and proper separation of concerns between page objects and test assertions. The rule emphasizes using unique CSS selectors over XPaths, avoiding assertions in page objects, and following a standardized folder structure.
+globs: ["**/pages/**/*.ts"]
+alwaysApply: false
+---
+
 # CodeceptJS Page Object Rule
 
 ## Rule Summary
